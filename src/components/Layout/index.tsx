@@ -1,13 +1,11 @@
 import {PropsWithChildren} from 'react';
 
 import Header from '../Header';
-import Footer from '../Footer';
 
 const Layout = ({children}: PropsWithChildren<{}>) => (
   <>
-    <Header title="Gallery Site" />
+    <Header title="To-Do List" />
     {children}
-    <Footer />
   </>
 );
 

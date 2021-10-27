@@ -1,105 +1,100 @@
-import Image from 'next/image';
+import {useState} from 'react';
+
+import {uuid} from 'uuidv4';
 
 import {
+  Box,
   Button,
   Card,
-  CardActions,
   CardContent,
-  CardMedia,
-  Container,
-  Grid,
-  Link,
+  FormControl,
+  Input,
+  InputLabel,
   Stack,
   Typography,
 } from '@material-ui/core';
-import GitHubIcon from '@material-ui/icons/GitHub';
-import LibraryBooksIcon from '@material-ui/icons/LibraryBooks';
 
-import HeroSection from '../components/Hero';
-import {NextLinkComposed} from '../components/Link';
+interface ListItem {
+  id: string;
+  content: string;
+}
 
-const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+const Homepage = () => {
+  const [input, setInput] = useState<string>('');
+  const [items, setItems] = useState<ListItem[]>([]);
 
-const Homepage = () => (
-  <main>
-    <HeroSection>
-      <Typography
-        component="h1"
-        variant="h2"
-        align="center"
-        color="text.primary"
-        gutterBottom
-      >
-        Next.js Boilerplate!
-      </Typography>
-      <Typography variant="h5" align="center" color="text.secondary" paragraph>
-        Use this to kickstart your Next.js projects. Check out the{' '}
-        <Link href="https://next.material-ui.com/">
-          Material UI component library docs
-        </Link>
-        .
-      </Typography>
-      <Stack sx={{pt: 4}} direction="row" spacing={2} justifyContent="center">
-        <Button
-          component={NextLinkComposed}
-          variant="contained"
-          to="https://github.com/gdscports/admins-2021-boilerplate-next-BNXT"
-          endIcon={<GitHubIcon />}
-        >
-          Clone on GitHub
-        </Button>
-        <Button
-          component={NextLinkComposed}
-          variant="outlined"
-          to="https://github.com/gdscports/admins-2021-docs#-gdsc-university-of-portsmouth-engineering-documentation"
-          endIcon={<LibraryBooksIcon />}
-        >
-          Read the Docs
-        </Button>
-      </Stack>
-    </HeroSection>
-    <Container sx={{py: 8}} maxWidth="md">
-      <Grid container spacing={4}>
-        {cards.map(card => (
-          <Grid item key={card} xs={12} sm={6} md={4}>
-            <Card
-              sx={{
-                height: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-              }}
+  function addItem(item: ListItem) {
+    setItems([...items, item]);
+  }
+
+  function removeItem(id: string) {
+    const newItems = items.filter(item => item.id !== id);
+    setItems(newItems);
+  }
+
+  return (
+    <main>
+      <div>
+        <FormControl variant="standard" sx={{display: 'flex'}}>
+          <Stack direction="row" sx={{width: '100%'}} spacing={4}>
+            <div style={{width: '100%'}}>
+              <InputLabel htmlFor="inputAdd">Write an Item</InputLabel>
+              <Input
+                id="inputAdd"
+                sx={{width: '100%'}}
+                placeholder="Buy groceries"
+                type="text"
+                onInput={({target}) => {
+                  const inputElem = target as HTMLInputElement;
+                  const truncatedValue = inputElem.value.substring(0, 30);
+                  setInput(truncatedValue);
+                }}
+              />
+            </div>
+            <Button
+              variant="contained"
+              id="btnAdd"
+              name="Add item"
+              onClick={() =>
+                addItem({
+                  id: uuid(),
+                  content: input,
+                })
+              }
             >
-              <CardMedia>
-                <Image
-                  src="1508789733592-e934906d39cd"
-                  loader={({width, src, quality}) =>
-                    `https://images.unsplash.com/photo-${src}?auto-format&fit=crop&w=${width}&q=${quality}`
-                  }
-                  placeholder="blur"
-                  blurDataURL="data:image/svg+xml;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkqAcAAIUAgUW0RjgAAAAASUVORK5CYII="
-                  width={1920}
-                  height={1080}
-                />
-              </CardMedia>
-              <CardContent sx={{flexGrow: 1}}>
-                <Typography gutterBottom variant="h5" component="h2">
-                  Heading
-                </Typography>
-                <Typography>
-                  This is a media card. You can use this section to describe the
-                  content.
-                </Typography>
+              Add
+            </Button>
+          </Stack>
+        </FormControl>
+      </div>
+      <Stack direction="column" spacing={4} sx={{marginTop: '2rem'}}>
+        {items.map(({content, id}) => {
+          return (
+            <Card key={id}>
+              <CardContent>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignContent: 'center',
+                  }}
+                >
+                  <Typography sx={{marginY: 'auto'}}>{content}</Typography>
+                  <Button
+                    variant="contained"
+                    color="error"
+                    onClick={() => removeItem(id)}
+                  >
+                    Remove
+                  </Button>
+                </Box>
               </CardContent>
-              <CardActions>
-                <Button size="small">View</Button>
-                <Button size="small">Edit</Button>
-              </CardActions>
             </Card>
-          </Grid>
-        ))}
-      </Grid>
-    </Container>
-  </main>
-);
+          );
+        })}
+      </Stack>
+    </main>
+  );
+};
 
 export default Homepage;

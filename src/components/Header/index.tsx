@@ -1,5 +1,5 @@
 import {AppBar, Toolbar, Typography} from '@material-ui/core';
-import CameraIcon from '@material-ui/icons/PhotoCamera';
+import CameraIcon from '@material-ui/icons/Fireplace';
 
 interface HeaderProps {
   title: string;
