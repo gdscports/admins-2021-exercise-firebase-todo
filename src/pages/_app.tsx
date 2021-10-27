@@ -5,6 +5,8 @@ import type {AppProps} from 'next/app';
 import {useMemo} from 'react';
 import {NextSeo} from 'next-seo';
 
+import useAuth from '../helpers/useAuth';
+
 import createEmotionCache from '../helpers/createEmotionCache';
 import Layout from '../components/Layout';
 
@@ -34,6 +36,14 @@ const App = ({
     [prefersDarkMode]
   );
 
+  // Ensure user is logged in
+  const {isAuthed, message} = useAuth();
+
+  if (!isAuthed) {
+    return <>{message}</>;
+  }
+
+  // Else, display the page
   return (
     <>
       <NextSeo
