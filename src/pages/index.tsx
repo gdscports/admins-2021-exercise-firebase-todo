@@ -1,7 +1,5 @@
 import {useState} from 'react';
 
-import {uuid} from 'uuidv4';
-
 import firebase from '../helpers/firebase';
 import {useCollection} from 'react-firebase-hooks/firestore';
 
@@ -18,7 +16,6 @@ import {
 } from '@material-ui/core';
 
 interface ListItem {
-  id: string;
   content: string;
 }
 
@@ -30,17 +27,13 @@ const Homepage = () => {
   );
 
   const [input, setInput] = useState<string>('');
-  const [items, setItems] = useState<ListItem[]>([]);
 
   function addItem(item: ListItem) {
-    // TODO: Add items to firebase instead
-    setItems([...items, item]);
+    firebase.firestore().collection('items').add(item);
   }
 
   function removeItem(id: string) {
-    // TODO: Remove items from firebase instead
-    const newItems = items.filter(item => item.id !== id);
-    setItems(newItems);
+    firebase.firestore().collection('items').doc(id).delete();
   }
 
   return (
@@ -75,7 +68,6 @@ const Homepage = () => {
                   name="Add item"
                   onClick={() =>
                     addItem({
-                      id: uuid(),
                       content: input,
                     })
                   }
@@ -86,7 +78,9 @@ const Homepage = () => {
             </FormControl>
           </div>
           <Stack direction="column" spacing={4} sx={{marginTop: '2rem'}}>
-            {items.map(({content, id}) => {
+            {value.docs.map(doc => {
+              const {content} = doc.data();
+              const {id} = doc;
               return (
                 <Card key={id}>
                   <CardContent>
